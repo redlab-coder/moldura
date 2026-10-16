@@ -3,6 +3,7 @@ import io
 import json
 from pathlib import Path
 import tempfile
+import threading
 import unittest
 from unittest.mock import Mock, patch
 
@@ -82,3 +83,21 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(installed_directory(),self.root.resolve())
             with patch('updater.sys.executable',str(self.root/'Moldura-v8.exe')):
                 self.assertIsNone(installed_directory())
+
+    def test_ui_status_is_readable_while_downloading_and_restored_when_ready(self):
+        entered, release = threading.Event(), threading.Event()
+        def opener(request, timeout):
+            if not request.full_url.endswith('update.json'):
+                entered.set()
+                release.wait(3)
+            return self.opener(request, timeout)
+        manager=self.manager(opener=opener)
+        thread=threading.Thread(target=manager.check)
+        thread.start()
+        try:
+            self.assertTrue(entered.wait(2))
+            self.assertEqual(manager.snapshot(),{'state':'downloading','version':'1.1.0'})
+        finally:
+            release.set();thread.join(timeout=3)
+        self.assertEqual(manager.snapshot(),{'state':'ready','version':'1.1.0'})
+        self.assertEqual(self.manager().snapshot(),{'state':'ready','version':'1.1.0'})

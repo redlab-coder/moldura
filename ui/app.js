@@ -164,6 +164,7 @@ function renderLibrary() {
   $('export').disabled=!photos.length||importing||exporting||restoring;
   const pages=Math.ceil(photos.length/capacity());
   $('export-label').textContent=exporting?'Preparando…':photos.length?`Exportar ${pages} folha${pages>1?'s':''}`:'Exportar JPG';
+  $('export').setAttribute('aria-label',$('export-label').textContent);$('export').title=$('export-label').textContent;
   $('sheet-summary').textContent=photos.length?`${photos.length} foto${photos.length>1?'s':''} · ${pages} folha${pages>1?'s':''}`:'';
   for(const id of ['add','drop','empty-add'])$(id).disabled=!canEdit()||importing||exporting;
   if(keepListFocus)focusSelectedPhoto();
@@ -294,7 +295,20 @@ $('export').onclick=async()=>{
   }catch(error){toast(error.message);}finally{exporting=false;renderLibrary();flushRestore();}
 };
 $('quit').onclick=async()=>{if(photos.length&&!confirm('Você já exportou suas folhas? Encerrar descarta as fotos e ajustes desta sessão.'))return;try{await api('quit',{});closed=true;photos=[];editingAllowed=false;releaseOwnership?.();channel?.close();localStorage.removeItem(sessionKey);clearInterval(heartbeat);clearTimeout(debounce);clearTimeout(editorTimer);clearTimeout(syncTimer);clearTimeout(toastTimer);cancelAnimationFrame(liveFrame);document.body.innerHTML='<main style="padding-top:100px;text-align:center"><h1>Até a próxima memória.</h1><p>O Moldura foi encerrado. Você pode fechar esta aba.</p></main>';}catch(error){toast(error.message);}};
-const heartbeat=setInterval(()=>api('heartbeat',{}).catch(()=>{clearInterval(heartbeat);toast('A sessão foi encerrada. Abra o Moldura novamente.');}),20000);
+async function refreshAppStatus(){
+  const state=await(await api('heartbeat',{})).json();if(closed)return;
+  const update=state.update,badge=$('update-status');
+  const visible=['available','downloading','ready'].includes(update?.state);
+  if(visible){
+    const label=update.state==='downloading'?'Baixando atualização':'Atualização disponível';
+    const detail=update.state==='ready'?`A versão ${update.version} está pronta e será instalada ao encerrar o Moldura.`:update.state==='downloading'?`A versão ${update.version} está sendo baixada em segundo plano.`:`A versão ${update.version} está disponível. O download será tentado novamente; você também pode verificar pela bandeja.`;
+    if($('update-label').textContent!==label)$('update-label').textContent=label;
+    if(badge.title!==detail){badge.title=detail;badge.setAttribute('aria-label',label+'. '+detail);}
+  }
+  badge.hidden=!visible;
+}
+const heartbeat=setInterval(()=>refreshAppStatus().catch(()=>{clearInterval(heartbeat);toast('A sessão foi encerrada. Abra o Moldura novamente.');}),20000);
+refreshAppStatus().catch(()=>{});
 async function restoreSession(saved) {
   if(!saved||saved.token!==token||!Array.isArray(saved.photos))return;
   const restoreRequest=++restoreVersion;

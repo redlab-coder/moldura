@@ -6,7 +6,7 @@ Depois de instalado, o Moldura consulta novas versões em segundo plano, baixa o
 
 A cópia portátil **Moldura-v8.exe** também está disponível na mesma página; ela funciona sem instalação e não aplica atualizações automáticas. A base portátil v7 está preservada na [versão 0.7.0](https://github.com/redlab-coder/moldura/releases/tag/v0.7.0).
 
-Clique no ícone para abrir a interface. Com o botão direito, escolha **Abrir Moldura** ou **Encerrar Moldura**. Abrir o executável novamente reutiliza o mesmo processo e a mesma porta. O serviço escuta apenas em `127.0.0.1`: outros computadores da rede não têm acesso. As versões anteriores foram preservadas. Exporte sua sessão antiga antes de encerrá-la e passe a usar o atalho da versão instalada. A bandeja identifica a versão 1.0.0.
+Clique no ícone para abrir a interface. Com o botão direito, escolha **Abrir Moldura** ou **Encerrar Moldura**. Abrir o executável novamente reutiliza o mesmo processo e a mesma porta. O serviço escuta apenas em `127.0.0.1`: outros computadores da rede não têm acesso. As versões anteriores foram preservadas. Exporte sua sessão antiga antes de encerrá-la e passe a usar o atalho da versão instalada. A bandeja e o cabeçalho identificam a versão em execução.
 
 1. Clique em **Adicionar fotos** ou arraste arquivos para a área indicada.
 2. Selecione uma foto na coluna esquerda. Arraste a imagem na prévia para enquadrar, use o zoom e ajuste as cores. O contorno pontilhado delimita a área visível do modelo escolhido. **Guias** mostra/oculta as marcações; **Centralizar** reposiciona sem alterar zoom ou cores. O botão **?** reúne as orientações de uso. Clique na prévia e use as setas para mover um pixel da imagem original; Shift + seta move dez pixels.
@@ -24,5 +24,9 @@ A prévia ampliada reúne a folha e o botão para baixar somente aquele JPG.
 ## Arquivos e limites
 
 Aceita JPG, PNG, WebP, BMP e TIFF (primeira página). Transparência é composta sobre branco; a orientação EXIF é corrigida. Perfis ICC válidos são convertidos a sRGB. Arquivos de até 50 MB e 60 megapixels; o lote aceita até 100 fotos e 4 GB de arquivos originais em armazenamento temporário. O cache de imagens decodificadas é limitado a 160 MiB; isso não inclui a memória transitória necessária para processar uma foto e compor a folha. É necessário espaço livre no disco temporário. HEIC e RAW devem ser convertidos antes.
+
+## Versão e atualizações
+
+A versão em execução aparece ao lado do nome Moldura. Quando uma nova versão estiver sendo baixada, o cabeçalho mostra **Baixando atualização**. Depois da verificação, mostra **Atualização disponível**; a instalação acontece ao encerrar normalmente o aplicativo. A consulta também pode ser feita em **Verificar atualizações**, na bandeja do Windows.
 
 [← Documentação](README.md) · [Moldura](../README.md)

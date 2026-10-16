@@ -60,12 +60,14 @@ class Updater:
         self.lock = threading.Lock()
         self.stopped = threading.Event()
         self.pending = None
+        self._ui_state = {'state': 'idle', 'version': None}
         self.status = 'Atualizações automáticas ativadas'
         try:
             value = validate_manifest(json.loads((self.root / 'pending.json').read_text(encoding='utf-8')))
             if version_tuple(value['version']) > version_tuple(current) and self.valid_download(value):
                 self.pending = value
                 self.status = 'Atualização pronta · será instalada ao encerrar'
+                self._ui_state = {'state': 'ready', 'version': value['version']}
             elif version_tuple(value['version']) <= version_tuple(current):
                 self.destination(value).unlink(missing_ok=True)
                 (self.root / 'pending.json').unlink(missing_ok=True)
@@ -76,6 +78,11 @@ class Updater:
         # File names are derived from a validated numeric version, never from a
         # server-provided file path or a release asset's arbitrary name.
         return self.root / f"Moldura-Setup-{manifest['version']}.exe"
+
+    def snapshot(self):
+        # Each transition replaces the whole value. Reading the status never
+        # waits for the download lock or exposes temporary paths to the UI.
+        return self._ui_state.copy()
 
     def valid_download(self, manifest):
         path = self.destination(manifest)
@@ -88,6 +95,7 @@ class Updater:
     def check(self):
         if not self.lock.acquire(blocking=False):
             return
+        candidate = None
         try:
             if self.stopped.is_set():
                 return
@@ -100,12 +108,15 @@ class Updater:
                 manifest = validate_manifest(json.loads(raw))
             if version_tuple(manifest['version']) <= version_tuple(self.current):
                 self.pending = None
+                self._ui_state = {'state': 'idle', 'version': None}
                 (self.root / 'pending.json').unlink(missing_ok=True)
                 self.status = 'Moldura atualizado'
                 return
+            candidate = manifest['version']
             target = self.destination(manifest)
             if not self.valid_download(manifest):
                 self.status = 'Baixando atualização em segundo plano…'
+                self._ui_state = {'state': 'downloading', 'version': candidate}
                 temporary = target.with_suffix('.part')
                 try:
                     request = urllib.request.Request(manifest['url'], headers={'User-Agent':f'Moldura/{self.current}'})
@@ -128,10 +139,14 @@ class Updater:
             state.write_text(json.dumps(manifest), encoding='utf-8')
             state.replace(self.root / 'pending.json')
             self.pending = manifest
+            self._ui_state = {'state': 'ready', 'version': candidate}
             self.status = 'Atualização pronta · será instalada ao encerrar'
         except (OSError, ValueError, TypeError) as error:
             LOG.info('Atualização adiada: %s', type(error).__name__)
             self.status = 'Atualização pronta · será instalada ao encerrar' if self.pending else 'Sem conexão · tentaremos novamente depois'
+            self._ui_state = ({'state': 'ready', 'version': self.pending['version']} if self.pending else
+                              {'state': 'available', 'version': candidate} if candidate else
+                              {'state': 'idle', 'version': None})
         finally:
             self.lock.release()
 

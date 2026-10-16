@@ -2,6 +2,7 @@
 // Local vector family: crop corners, nested cuts and consistent rounded strokes.
 const MolduraIcons=(()=>{
   const paths={
+    update:'<path d="M4.6 8a8 8 0 1 1-.3 7M4 3v5h5m3 0v8m-3-3 3 3 3-3"/>',
     brand:'<path d="M3 8V4a1 1 0 0 1 1-1h4m8 0h4a1 1 0 0 1 1 1v4m0 8v4a1 1 0 0 1-1 1h-4m-8 0H4a1 1 0 0 1-1-1v-4"/><rect x="6" y="6" width="12" height="12" rx="3"/><circle cx="12" cy="12" r="3.4"/>',
     square:'<rect x="3" y="3" width="18" height="18" rx="4" stroke-dasharray="2.5 2.5"/><rect x="6.5" y="6.5" width="11" height="11" rx="2"/>',
     round_g:'<circle cx="12" cy="12" r="9" stroke-dasharray="2.5 2.5"/><circle cx="12" cy="12" r="6.5"/>',

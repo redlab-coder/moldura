@@ -1,5 +1,11 @@
 # Histórico
 
+## 1.0.1 — Versão e atualização na interface
+
+- Identificação discreta da versão ao lado do nome do aplicativo, substituindo o indicador “Local”.
+- Aviso de download e de atualização disponível no cabeçalho, com a indicação de que a instalação ocorre ao encerrar.
+- Cabeçalho adaptado para telas menores, com nome acessível no botão de exportação.
+
 ## 1.0.0 — Instalação e atualizações
 
 - Instalador por usuário para Windows, com atalhos e desinstalação padrão.

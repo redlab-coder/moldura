@@ -60,6 +60,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.json_reply({'product': 'Moldura', 'instance': INSTANCE, 'pid': __import__('os').getpid(), 'version': VERSION})
         if path == '/':
             html = (ROOT / 'ui' / 'index.html').read_text(encoding='utf-8').replace('__TOKEN__', TOKEN)
+            html = html.replace('__VERSION__', VERSION)
             html = html.replace('__TEMPLATES__', json.dumps({key: template_info(key) for key in TEMPLATES}, ensure_ascii=False))
             return self.reply(html.encode(), 'text/html; charset=utf-8')
         if path in ('/app.js', '/icons.js', '/style.css'):
@@ -101,7 +102,8 @@ class Handler(BaseHTTPRequestHandler):
             if path == '/api/templates':
                 return self.json_reply([template_info(key) for key in TEMPLATES])
             if path == '/api/heartbeat':
-                return self.json_reply({'ok': True})
+                updates = getattr(self.server, 'updater', None)
+                return self.json_reply({'ok': True, 'version': VERSION, 'update': updates.snapshot() if updates else {'state': 'disabled', 'version': None}})
             if path == '/api/quit':
                 self.json_reply({'ok': True})
                 stop = getattr(self.server, 'request_shutdown', self.server.shutdown)
@@ -228,6 +230,7 @@ def main():
             updates.start()
         except OSError:
             pass  # An update failure must never prevent local editing.
+    server.updater = updates
     url = f'http://127.0.0.1:{server.server_port}'
     if instance:
         instance.publish(url, INSTANCE)

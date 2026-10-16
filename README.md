@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/redlab-coder/moldura/releases/download/v1.0.0/Moldura-Setup-1.0.0.exe">
+  <a href="https://github.com/redlab-coder/moldura/releases/download/v1.0.1/Moldura-Setup-1.0.1.exe">
     <img src="docs/images/download.svg" alt="Baixar o instalador do Moldura para Windows" width="252" height="54">
   </a>
   <br>

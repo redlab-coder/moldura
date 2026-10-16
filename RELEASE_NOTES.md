@@ -1,3 +1,5 @@
-Instalação para Windows com atalhos e atualizações automáticas verificadas. Novas versões são baixadas em segundo plano e instaladas ao encerrar normalmente o aplicativo, preservando o trabalho durante a edição.
+A versão do Moldura agora aparece ao lado do nome do aplicativo, no lugar do indicador “Local”.
 
-O instalador funciona por usuário, sem exigir administrador. O visual, os quatro modelos, a otimização para fotos grandes e a impressão a 300 DPI foram preservados. A versão portátil continua disponível e não instala atualizações automaticamente.
+Quando houver uma atualização, o cabeçalho mostra discretamente o download em andamento ou a atualização disponível. A informação de que ela será instalada ao encerrar fica acessível no aviso. O editor continua livre para trabalhar durante o download.
+
+Gabaritos, medidas de impressão, qualidade dos JPGs e funcionamento da atualização ao encerrar foram preservados.

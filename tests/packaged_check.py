@@ -49,6 +49,7 @@ try:
         subprocess.run([sys.executable,str(Path(__file__).parent/'round_browser_check.py'),url],check=True)
         subprocess.run([sys.executable,str(Path(__file__).parent/'refinement_browser_check.py'),url],check=True)
         subprocess.run([sys.executable,str(Path(__file__).parent/'sheet_navigation_browser_check.py'),url],check=True)
+        subprocess.run([sys.executable,str(Path(__file__).parent/'header_status_browser_check.py'),url],check=True)
     if len(sys.argv)>2:
         subprocess.run([sys.executable,str(Path(__file__).parent/'heavy_photo_browser_check.py'),url,*sys.argv[2:]],check=True)
     html=urllib.request.urlopen(url).read().decode()

@@ -6,6 +6,7 @@ import urllib.request
 import urllib.error
 import zipfile
 from unittest.mock import patch
+from unittest.mock import Mock
 from http.server import ThreadingHTTPServer
 from PIL import Image
 import app
@@ -28,6 +29,21 @@ class ApiTests(unittest.TestCase):
         if origin:headers['Origin']=origin
         req=urllib.request.Request(self.url+'/api/'+path,data=data if raw else json.dumps(data).encode(),headers=headers)
         return urllib.request.urlopen(req)
+
+    def test_version_and_update_status_are_available_without_affecting_session(self):
+        with urllib.request.urlopen(self.url) as response:
+            html=response.read().decode()
+        self.assertIn('v'+app.VERSION,html)
+        self.assertNotIn('__VERSION__',html)
+        with self.request('heartbeat',{}) as response:
+            state=json.load(response)
+        self.assertEqual(state['version'],app.VERSION)
+        self.assertEqual(state['update']['state'],'disabled')
+        self.server.updater=Mock(snapshot=Mock(return_value={'state':'ready','version':'1.1.0'}))
+        try:
+            with self.request('heartbeat',{}) as response:
+                self.assertEqual(json.load(response)['update'],{'state':'ready','version':'1.1.0'})
+        finally:del self.server.updater
 
     def test_full_three_photo_export_and_delete(self):
         items=[]
