@@ -16,6 +16,8 @@ from PIL import UnidentifiedImageError, Image
 from engine import load_image, render_tile, compose_page, jpeg_bytes, template_info, TEMPLATES
 from desktop import SingleInstance, run_tray
 from photo_store import PhotoRecord, PhotoCache
+from updater import Updater, installed_directory
+from version import VERSION, PORTABLE_NAMESPACE, INSTALLED_NAMESPACE, INSTALLED_MUTEX
 
 ROOT = Path(getattr(sys, '_MEIPASS', Path(__file__).parent))
 TOKEN = secrets.token_urlsafe(24)
@@ -55,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.json_reply({'error': 'Acesso inválido.'}, 403)
         path = urlparse(self.path).path
         if path == '/health':
-            return self.json_reply({'product': 'Moldura', 'instance': INSTANCE, 'pid': __import__('os').getpid()})
+            return self.json_reply({'product': 'Moldura', 'instance': INSTANCE, 'pid': __import__('os').getpid(), 'version': VERSION})
         if path == '/':
             html = (ROOT / 'ui' / 'index.html').read_text(encoding='utf-8').replace('__TOKEN__', TOKEN)
             html = html.replace('__TEMPLATES__', json.dumps({key: template_info(key) for key in TEMPLATES}, ensure_ascii=False))
@@ -196,8 +198,10 @@ def main():
     parser.add_argument('--no-browser', action='store_true')
     parser.add_argument('--no-tray', action='store_true')
     parser.add_argument('--isolated', action='store_true', help='Instância separada apenas para testes.')
+    parser.add_argument('--no-updates', action='store_true', help='Não consultar atualizações nesta execução.')
     args = parser.parse_args()
-    instance = None if args.isolated else SingleInstance('Moldura-v7')
+    install_dir = installed_directory() if not args.isolated else None
+    instance = None if args.isolated else SingleInstance(INSTALLED_NAMESPACE if install_dir else PORTABLE_NAMESPACE, mutex_name=INSTALLED_MUTEX if install_dir else None)
     if instance and not instance.owner:
         existing = instance.existing_url()
         instance.close()
@@ -217,6 +221,13 @@ def main():
             instance.close()
         raise
     server.daemon_threads = True
+    updates = None
+    if install_dir and not args.no_updates:
+        try:
+            updates = Updater(install_dir)
+            updates.start()
+        except OSError:
+            pass  # An update failure must never prevent local editing.
     url = f'http://127.0.0.1:{server.server_port}'
     if instance:
         instance.publish(url, INSTANCE)
@@ -231,7 +242,7 @@ def main():
             tray.stop()
     server.request_shutdown = request_shutdown
     if sys.platform == 'win32' and not args.no_tray:
-        tray = run_tray(url, request_shutdown, lambda: bool(IMAGES))
+        tray = run_tray(url, request_shutdown, lambda: bool(IMAGES), updates)
     if not args.no_browser:
         webbrowser.open(url)
     if sys.stdout:
@@ -262,6 +273,8 @@ def main():
         CACHE.clear()
         if instance:
             instance.close()
+        if updates:
+            updates.install_on_exit()
 
 
 if __name__ == '__main__':

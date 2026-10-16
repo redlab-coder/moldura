@@ -12,8 +12,8 @@ import urllib.request
 
 heavy_only='--heavy-only' in sys.argv
 if heavy_only:sys.argv.remove('--heavy-only')
-exe=Path(sys.argv[1] if len(sys.argv)>1 else 'dist/Moldura-v7.exe').resolve()
-metadata=Path(os.environ['LOCALAPPDATA'])/'Moldura-v7'/'runtime.json'
+exe=Path(sys.argv[1] if len(sys.argv)>1 else 'dist/Moldura-v8.exe').resolve()
+metadata=Path(os.environ['LOCALAPPDATA'])/'Moldura-v8'/'runtime.json'
 first=subprocess.Popen([str(exe),'--no-browser'],creationflags=subprocess.CREATE_NO_WINDOW)
 url=None
 try:

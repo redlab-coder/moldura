@@ -4,9 +4,13 @@ Estúdio local de impressão: enquadramento manual, zoom, rotação, brilho, con
 
 ## Abrir
 
-Abra **Moldura-v7.exe** na pasta `dist`. A interface abre no navegador padrão e um ícone de foto aparece na bandeja do Windows, ao lado do relógio (pode ficar dentro da seta de ícones ocultos). Não precisa instalar Python, conectar uma conta ou ter internet.
+Baixe o **Moldura-Setup-1.0.0.exe** na página de [versões oficiais](https://github.com/redlab-coder/moldura/releases/latest) e execute o instalador. A instalação é por usuário, com atalho no menu Iniciar e desinstalação pelas configurações do Windows. A interface abre no navegador padrão e o ícone fica na bandeja, ao lado do relógio. Não precisa instalar Python ou conectar uma conta. A edição e a exportação funcionam offline. Windows 10/11 de 64 bits.
 
-Clique no ícone para abrir a interface. Com o botão direito, escolha **Abrir Moldura** ou **Encerrar Moldura**. Abrir o executável novamente reutiliza o mesmo processo e a mesma porta. O serviço escuta apenas em `127.0.0.1`: outros computadores da rede não têm acesso. As versões anteriores foram preservadas. Exporte sua sessão antiga antes de encerrá-la e passe a usar Moldura-v7.exe. A bandeja identifica esta versão como Moldura v7.
+Depois de instalado, o Moldura consulta novas versões em segundo plano, baixa o instalador e verifica seu SHA-256. A atualização é aplicada somente depois que você encerra normalmente o aplicativo. Não fecha sua sessão para atualizar e não exige baixar/substituir o EXE manualmente. Na bandeja, **Verificar atualizações** permite consultar o estado. Sem conexão, o programa continua funcionando e tenta novamente depois.
+
+A cópia portátil **Moldura-v8.exe** também está disponível na mesma página; ela funciona sem instalação e não aplica atualizações automáticas. A base portátil v7 está preservada na [versão 0.7.0](https://github.com/redlab-coder/moldura/releases/tag/v0.7.0).
+
+Clique no ícone para abrir a interface. Com o botão direito, escolha **Abrir Moldura** ou **Encerrar Moldura**. Abrir o executável novamente reutiliza o mesmo processo e a mesma porta. O serviço escuta apenas em `127.0.0.1`: outros computadores da rede não têm acesso. As versões anteriores foram preservadas. Exporte sua sessão antiga antes de encerrá-la e passe a usar o atalho da versão instalada. A bandeja identifica a versão 1.0.0.
 
 1. Clique em **Adicionar fotos** ou arraste arquivos para a área indicada.
 2. Selecione uma foto na coluna esquerda. Arraste a imagem na prévia para enquadrar, use o zoom e ajuste as cores. O contorno pontilhado delimita a área visível do modelo escolhido. **Guias** mostra/oculta as marcações; **Centralizar** reposiciona sem alterar zoom ou cores. O botão **?** reúne as orientações de uso. Clique na prévia e use as setas para mover um pixel da imagem original; Shift + seta move dez pixels.
@@ -66,10 +70,12 @@ python -m unittest discover -s tests -v
 Para reconstruir o executável, instale PyInstaller e execute nesta pasta:
 
 ```powershell
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name Moldura-v7 --icon assets/moldura-v4.ico --add-data "ui;ui" --exclude-module numpy --exclude-module psutil --exclude-module charset_normalizer app.py
+python -m pip install -r requirements-build.txt
+./scripts/bootstrap_inno.ps1
+python scripts/build_windows.py
 ```
 
-O serviço escuta somente em 127.0.0.1, usa porta livre automaticamente e valida Host, Origin e token da sessão. Um mutex do Windows impede instâncias duplicadas; `%LOCALAPPDATA%/Moldura-v7/runtime.json` guarda somente a URL, PID e identificador de execução para localizar a instância existente, e é removido ao encerrar. Não há recursos externos, telemetria, banco de dados ou serviço de nuvem.
+O serviço escuta somente em 127.0.0.1, usa porta livre automaticamente e valida Host, Origin e token da sessão. Um mutex do Windows impede instâncias duplicadas; `%LOCALAPPDATA%/Moldura-Installed/runtime.json` (instalada) ou `%LOCALAPPDATA%/Moldura-v8/runtime.json` (portátil) guarda somente a URL, PID e identificador de execução para localizar a instância existente, e é removido ao encerrar. Não há telemetria, banco de dados ou envio de fotos à nuvem. A versão instalada consulta somente os arquivos de atualização do repositório oficial no GitHub, sem credenciais embutidas.
 
 Os testes de navegador estão em `tests/browser_check.py`; a validação do executável, janela nativa da bandeja, segunda abertura e encerramento está em `tests/packaged_check.py`. Esses dois scripts precisam de Playwright e Microsoft Edge instalados apenas na máquina de desenvolvimento. A distribuição não depende deles.
 
@@ -99,3 +105,13 @@ Os arquivos enviados são preservados integralmente em pastas temporárias locai
 O cache do servidor tem orçamento de 160 MiB, com cotas separadas para originais e prévias. A decodificação e o processamento de originais são serializados para evitar picos multiplicados por várias solicitações simultâneas. Arquivos ZIP maiores que 8 MiB usam armazenamento temporário e envio em blocos. As pastas de cada foto acompanham suas referências: uma exportação iniciada continua válida mesmo se outra aba remover uma foto. A remoção normal limpa os arquivos quando a última operação termina. Encerramento forçado ou falta de energia podem deixar temporários no Windows; não há recuperação de projeto após reiniciar o aplicativo.
 
 `tests/test_photo_store.py` cobre preservação dos bytes, cache limitado, separação entre original e prévia, imagens maiores que o cache e limpeza dos temporários. `tests/heavy_photo_browser_check.py URL foto1 foto2 foto3` testa 12 importações, memória, quadros durante arraste, exportação em zoom alto, todas as folhas e recuperação da aba; não grava fotos pessoais nos artefatos de teste. O script usa psutil somente no ambiente de desenvolvimento.
+
+## Histórico e publicação
+
+O Git começa com o snapshot da v7, registrado em `v0.7.0`. Os relatórios anteriores foram preservados como documentação; não representam commits retroativos. A primeira versão com instalador e atualizador é `v1.0.0`. Veja [CHANGELOG.md](CHANGELOG.md).
+
+O GitHub Actions testa e compila alterações em `main` e pull requests. Para publicar uma atualização, atualize `version.py`, `CHANGELOG.md` e `RELEASE_NOTES.md`, registre o commit e envie uma tag correspondente, por exemplo `v1.0.1`. O workflow testa o EXE e a instalação no Windows, gera os arquivos, cria um rascunho de release, envia todos os assets e só então publica. Commits em desenvolvimento não são distribuídos automaticamente aos usuários.
+
+O instalador usa um AppId e um caminho estáveis, de forma que novas versões substituem a instalação existente. Não é necessário desinstalar. A verificação ocorre 15 segundos após abrir e depois a cada seis horas; a conexão e o tempo de execução determinam quando uma versão chega a cada computador. Uma atualização já verificada pode ser aplicada ao encerrar mesmo se a internet cair.
+
+SHA-256 verifica integridade, não substitui assinatura de código. O instalador ainda não possui certificado comercial de assinatura do Windows; baixe somente das releases deste repositório. O log de instalação das atualizações fica em `%LOCALAPPDATA%/Moldura/updates/install.log`. Arquivos de fotos e ajustes da sessão continuam temporários; exporte antes de encerrar.

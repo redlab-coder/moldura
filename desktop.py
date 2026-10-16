@@ -8,6 +8,7 @@ import urllib.request
 import webbrowser
 from pathlib import Path
 from PIL import Image, ImageDraw
+from version import VERSION
 
 
 def icon_image():
@@ -24,7 +25,7 @@ def icon_image():
 
 
 class SingleInstance:
-    def __init__(self, namespace='Moldura'):
+    def __init__(self, namespace='Moldura', mutex_name=None):
         self.handle = None
         self.owner = False
         root = Path(os.environ.get('LOCALAPPDATA', Path.home())) / namespace
@@ -37,7 +38,7 @@ class SingleInstance:
             kernel.CloseHandle.argtypes = (ctypes.c_void_p,)
             kernel.CloseHandle.restype = ctypes.c_int
             self.kernel = kernel
-            name = 'Local\\' + namespace + '-' + hashlib.sha256(str(Path.home()).encode()).hexdigest()[:20]
+            name = mutex_name or 'Local\\' + namespace + '-' + hashlib.sha256(str(Path.home()).encode()).hexdigest()[:20]
             ctypes.set_last_error(0)
             self.handle = kernel.CreateMutexW(None, False, name)
             if not self.handle:
@@ -90,7 +91,7 @@ def confirm_shutdown():
     return ctypes.windll.user32.MessageBoxW(None, 'Encerrar o Moldura? Exporte suas folhas antes de continuar.\nAs fotos e ajustes desta sessão serão descartados.', 'Moldura', 0x24 | 0x10000) == 6
 
 
-def run_tray(url, request_shutdown, has_photos):
+def run_tray(url, request_shutdown, has_photos, updater=None):
     import pystray
     def open_app(icon, item):
         webbrowser.open(url)
@@ -98,9 +99,14 @@ def run_tray(url, request_shutdown, has_photos):
         if has_photos() and not confirm_shutdown():
             return
         request_shutdown()
-    icon = pystray.Icon('Moldura', icon_image(), 'Moldura v7 · Estúdio de impressão', menu=pystray.Menu(
+    items = [
         pystray.MenuItem('Abrir Moldura', open_app, default=True),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem('Encerrar Moldura', quit_app),
-    ))
+    ]
+    if updater:
+        items.extend([pystray.Menu.SEPARATOR,
+                      pystray.MenuItem(lambda item: updater.status, None, enabled=False),
+                      pystray.MenuItem('Verificar atualizações', lambda icon, item: updater.check_async())])
+    icon = pystray.Icon('Moldura', icon_image(), f'Moldura {VERSION} · Estúdio de impressão', menu=pystray.Menu(*items))
     return icon
