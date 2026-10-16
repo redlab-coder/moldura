@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="480" viewBox="0 0 1440 480" role="img" aria-labelledby="title desc">
+  <title id="title">Moldura</title>
+  <desc id="desc">Suas fotos, prontas para imprimir. Identidade verde do Moldura com uma folha e dois buttons ilustrados.</desc>
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#213d2b" flood-opacity=".09"/></filter>
+    <clipPath id="card"><rect width="1440" height="480" rx="24"/></clipPath>
+    <clipPath id="circle"><circle r="100"/></clipPath>
+    <g id="botanical" clip-path="url(#circle)">
+      <circle r="100" fill="#edf0e3"/>
+      <path d="M0 128C-24 62 28 19 6-78" fill="none" stroke="#5d795b" stroke-width="3"/>
+      <path d="M-7 69C-57 70-75 36-69 13C-35 17-11 41-7 69ZM5 34C43 28 63 0 55-24C22-14 4 5 5 34ZM7-9C-23-14-45-41-36-61C-5-49 9-31 7-9ZM12-48C35-54 45-75 37-90C18-81 11-64 12-48Z" fill="#85966e"/>
+      <circle cx="-43" cy="-10" r="7" fill="#c0a678"/>
+      <circle cx="50" cy="51" r="5" fill="#c0a678"/>
+    </g>
+  </defs>
+  <g clip-path="url(#card)">
+    <rect width="1440" height="480" fill="#f3f5ee"/>
+    <g transform="translate(76 63)">
+      <rect width="50" height="50" rx="14" fill="#365e43"/>
+      <g transform="translate(8 8) scale(1.4167)" fill="none" stroke="#f0f5e8" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8V4a1 1 0 0 1 1-1h4m8 0h4a1 1 0 0 1 1 1v4m0 8v4a1 1 0 0 1-1 1h-4m-8 0H4a1 1 0 0 1-1-1v-4"/>
+        <rect x="6" y="6" width="12" height="12" rx="3"/><circle cx="12" cy="12" r="3.4"/>
+      </g>
+      <text x="65" y="38" font-family="Segoe UI,Arial,sans-serif" font-size="40" font-weight="650" letter-spacing="-1.6" fill="#2b4032">Moldura</text>
+    </g>
+    <g font-family="Segoe UI,Arial,sans-serif" fill="#2b4032">
+      <text x="76" y="224" font-size="54" font-weight="600" letter-spacing="-2">Suas fotos, prontas</text>
+      <text x="76" y="287" font-size="54" font-weight="600" letter-spacing="-2">para imprimir.</text>
+      <text x="79" y="387" font-size="20" fill="#72816e">Gabaritos para buttons · JPG a 300 DPI</text>
+    </g>
+    <path d="M740 79V401" stroke="#dbe2d3" stroke-width="1"/>
+    <g transform="translate(825 94) rotate(-7 280 170)" filter="url(#shadow)">
+      <rect width="560" height="340" rx="14" fill="#fff"/>
+      <g transform="translate(153 170)"><use href="#botanical"/></g>
+      <g transform="translate(407 170)"><use href="#botanical" transform="rotate(36)"/></g>
+      <g fill="none" stroke="#c6d0bc" stroke-width="1.2" stroke-linecap="round">
+        <path d="M39 53V34H58M502 34H521V53M521 287V306H502M58 306H39V287"/>
+      </g>
+    </g>
+  </g>
+</svg>

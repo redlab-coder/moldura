@@ -1,0 +1,29 @@
+name: Relatar um problema
+description: Algo não funcionou como esperado no Moldura.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versão do Moldura
+      description: Consulte o ícone do Moldura na bandeja do Windows.
+      placeholder: "Ex.: 1.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: O que aconteceu?
+      description: Conte o que você estava fazendo e como reproduzir o problema.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: O que você esperava?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Detalhes que podem ajudar
+      description: Versão do Windows, navegador, modelo de gabarito ou mensagem de erro. Se anexar imagens, use conteúdo de demonstração, sem fotos de clientes ou dados pessoais.
