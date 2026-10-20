@@ -1,38 +1,14 @@
-<p align="center">
-  <img src="docs/images/banner.svg" alt="Moldura — suas fotos, prontas para imprimir" width="100%">
-</p>
+<p align="center"><img src="https://raw.githubusercontent.com/redlab-coder/redlab-editor/main/docs/images/banner.svg" alt="RedLab Editor" width="100%"></p>
 
-<p align="center">
-  <a href="https://github.com/redlab-coder/moldura/releases/download/v1.0.1/Moldura-Setup-1.0.1.exe">
-    <img src="docs/images/download.svg" alt="Baixar o instalador do Moldura para Windows" width="252" height="54">
-  </a>
-  <br>
-  <sub>Windows 10 e 11 · 64 bits · Instalação sem administrador</sub>
-</p>
+# Moldura — repositório histórico
 
-<p align="center">
-  <a href="https://github.com/redlab-coder/moldura/releases/latest">Versões e edição portátil</a>
-  &nbsp; · &nbsp;
-  <a href="docs/usage.md">Guia de uso</a>
-</p>
+O desenvolvimento está no **[RedLab Editor](https://github.com/redlab-coder/redlab-editor)**, com Bottons Editor e Polaroid Editor organizados em ferramentas independentes.
 
-![Interface do Moldura com o gabarito Redondo G e artes de demonstração](docs/images/workspace.png)
+O Moldura agora se chama **Bottons Editor**. Seus gabaritos e sua impressão foram preservados. Exporte as folhas antes de encerrar para atualizar.
 
-## Do arquivo ao papel
+- [Baixar Bottons Editor e consultar sua versão atual](https://github.com/redlab-coder/redlab-editor/releases/tag/bottons-v1.1.0)
+- [Documentação atual](https://github.com/redlab-coder/redlab-editor/tree/main/apps/bottons-editor)
+- [Relatar um problema](https://github.com/redlab-coder/redlab-editor/issues/new/choose)
+- [Entender a transição](TRANSITION.md)
 
-1. **Adicione suas fotos** e escolha o gabarito.
-2. **Enquadre e ajuste** a imagem na prévia.
-3. **Exporte as folhas** prontas para imprimir.
-
-## O essencial
-
-- **Quatro gabaritos.** Quadrado e Redondo G, M e P, com sangria e distribuição automática.
-- **Ajustes precisos.** Enquadramento, zoom, brilho, contraste, saturação e nitidez.
-- **Impressão a 300 DPI.** Folhas de 15,2 × 10,2 cm em JPG de qualidade máxima; vários arquivos vêm em ZIP.
-- **Trabalho local.** Edição offline, originais preservados e atualizações automáticas na versão instalada.
-
-Imprima em **tamanho real / 100%**. Exporte suas folhas antes de encerrar o aplicativo.
-
----
-
-[Documentação](docs/README.md) · [Gabaritos](docs/templates.md) · [Desenvolvimento](docs/development.md) · [Histórico](CHANGELOG.md) · [Contribuir](CONTRIBUTING.md)
+Os commits, tags e downloads anteriores ficam preservados aqui. A release de transição atende aos atualizadores antigos; as próximas versões são publicadas somente no novo repositório. O código presente aqui registra a etapa anterior à integração. O código dos novos instaladores está nas tags correspondentes do RedLab Editor.
